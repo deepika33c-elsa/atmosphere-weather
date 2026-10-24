@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATMOSPHERE | Weather Intelligence</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#080d1a;color:#edf4ff;font-family:Arial,sans-serif;min-height:100vh;padding:28px;background-image:radial-gradient(ellipse at 15% 0%,#102d50 0,transparent 42%),radial-gradient(ellipse at 90% 30%,#15153b 0,transparent 35%)}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:38px;gap:15px;flex-wrap:wrap}
+.logo{font-size:23px;font-weight:800;letter-spacing:4px;color:#fff}
+.logo span{color:#39c6ff}
+.tag{color:#7f9dbd;font-size:11px;letter-spacing:2px;margin-top:7px}
+.live{border:1px solid #214c68;border-radius:30px;padding:10px 15px;color:#6ce8cb;font-size:12px}
+h1{font-size:clamp(27px,4vw,42px);margin-bottom:10px}
+.sub{color:#8195b3;line-height:1.7;margin-bottom:27px}
+.search{display:flex;gap:10px;margin-bottom:28px;max-width:680px}
+input{min-width:0;flex:1;background:#111c30;border:1px solid #263d5b;border-radius:12px;padding:16px;color:white;font-size:15px;outline:none}
+input:focus{border-color:#35bfff}
+button{background:linear-gradient(120deg,#168bff,#42d6ff);color:#041326;border:0;border-radius:12px;padding:0 23px;font-weight:800;cursor:pointer}
+button:hover{filter:brightness(1.15)}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.card{background:linear-gradient(145deg,#15233a,#0e1728);border:1px solid #223550;border-radius:18px;padding:22px;box-shadow:0 12px 40px #0002}
+.main{grid-column:span 2;grid-row:span 2;min-height:290px;display:flex;flex-direction:column;justify-content:space-between}
+.label{font-size:11px;color:#829bb9;letter-spacing:1.8px;text-transform:uppercase}
+.city{font-size:23px;margin-top:13px}
+.temp{font-size:clamp(55px,8vw,83px);font-weight:700;letter-spacing:-5px;margin-top:10px}
+.condition{color:#8eb6df;font-size:15px;margin-top:5px}
+.weather-icon{font-size:64px;filter:drop-shadow(0 0 18px #38baff55)}
+.metric{font-size:32px;font-weight:700;margin-top:25px}
+.unit{font-size:15px;color:#92a9c7}
+.bottom{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.section{margin:35px 0 17px;font-size:18px}
+.forecast{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.day{text-align:center;padding:20px 8px}
+.day-icon{font-size:29px;margin:16px 0}
+.day-name{font-size:12px;color:#8fa5c3}
+.day-temp{font-weight:700}
+.status{color:#6ce8cb;font-size:12px;margin-top:16px}
+footer{color:#536986;font-size:11px;text-align:center;margin-top:35px;letter-spacing:1px}
+#message{color:#ffb7b7;margin-bottom:15px;font-size:13px}
+@media(max-width:760px){body{padding:18px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.main{grid-column:span 2;grid-row:auto}.forecast{grid-template-columns:repeat(3,minmax(0,1fr))}.metric{font-size:27px}}
+@media(max-width:420px){.search{flex-direction:column}button{padding:15px}.forecast{grid-template-columns:repeat(2,minmax(0,1fr))}.card{padding:16px}}
+</style>
+</head>
+<body>
+<header>
+  <div><div class="logo">ATMOS<span>PHERE</span></div><div class="tag">REAL-TIME WEATHER INTELLIGENCE</div></div>
+  <div class="live">● LIVE WEATHER</div>
+</header>
+
+<h1>Weather, reimagined.</h1>
+<p class="sub">Your world, in real time. Explore atmospheric conditions with precision.</p>
+
+
+<form class="search" id="searchForm">
+  <input id="cityInput" placeholder="Search any city worldwide..." required>
+  <button type="submit">Explore →</button>
+  <button type="button" id="locationBtn">◎ My Location</button>
+</form>
+
+<div id="message"></div>
+
+<div class="grid">
+  <div class="card main">
+    <div><div class="label">CURRENT CONDITIONS</div><div class="city" id="city">Chennai, IN</div><div class="condition" id="condition">Ready to explore</div></div>
+    <div class="bottom"><div><div class="temp" id="temp">--°</div><div class="condition" id="feels">Feels like --°</div></div><div class="weather-icon" id="icon">🌌</div></div>
+    <div class="status" id="updated">● Waiting for live data</div>
+  </div>
+  <div class="card"><div class="label">HUMIDITY</div><div class="metric" id="humidity">--<span class="unit"> %</span></div><p class="condition">Atmospheric moisture</p></div>
+  <div class="card"><div class="label">WIND SPEED</div><div class="metric" id="wind">--<span class="unit"> m/s</span></div><p class="condition">Surface wind</p></div>
+  <div class="card"><div class="label">VISIBILITY</div><div class="metric" id="visibility">--<span class="unit"> km</span></div><p class="condition">Viewing distance</p></div>
+  <div class="card"><div class="label">PRESSURE</div><div class="metric" id="pressure">--<span class="unit"> hPa</span></div><p class="condition">Sea-level pressure</p></div>
+</div>
+
+<h2 class="section">Atmospheric outlook</h2>
+<div class="forecast" id="forecast">
+  <div class="card day"><div class="day-name">LIVE</div><div class="day-icon">🌐</div><div class="day-temp">--°</div></div>
+  <div class="card day"><div class="day-name">LIVE</div><div class="day-icon">☁️</div><div class="day-temp">--°</div></div>
+  <div class="card day"><div class="day-name">LIVE</div><div class="day-icon">🌤️</div><div class="day-temp">--°</div></div>
+  <div class="card day"><div class="day-name">LIVE</div><div class="day-icon">🌧️</div><div class="day-temp">--°</div></div>
+  <div class="card day"><div class="day-name">LIVE</div><div class="day-icon">☀️</div><div class="day-temp">--°</div></div>
+</div>
+<footer>ATMOSPHERE · WEATHER DATA FOR A CONNECTED WORLD</footer>
+
+
+<script>
+const form = document.getElementById("searchForm");
+const input = document.getElementById("cityInput");
+const message = document.getElementById("message");
+
+async function loadWeather(url) {
+  message.textContent = "Connecting to atmospheric data...";
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Weather unavailable.");
+
+    document.getElementById("city").textContent =
+      data.city + ", " + data.country;
+    document.getElementById("temp").textContent =
+      Math.round(data.temp) + "°";
+    document.getElementById("feels").textContent =
+      "Feels like " + Math.round(data.feels_like) + "°";
+    document.getElementById("condition").textContent = data.description;
+    document.getElementById("icon").textContent = data.icon;
+    document.getElementById("humidity").innerHTML =
+      data.humidity + '<span class="unit"> %</span>';
+    document.getElementById("wind").innerHTML =
+      data.wind + '<span class="unit"> m/s</span>';
+    document.getElementById("visibility").innerHTML =
+      data.visibility + '<span class="unit"> km</span>';
+    document.getElementById("pressure").innerHTML =
+      data.pressure + '<span class="unit"> hPa</span>';
+    document.getElementById("updated").textContent =
+      "● LIVE DATA · " + new Date().toLocaleTimeString();
+
+    const forecastUrl = url.replace("/weather?", "/forecast?");
+    const forecastResponse = await fetch(forecastUrl);
+    const forecastData = await forecastResponse.json();
+
+    if (forecastResponse.ok && forecastData.forecast) {
+      document.getElementById("forecast").innerHTML =
+        forecastData.forecast.map(day => `
+          <div class="card day">
+            <div class="day-name">${day.day}</div>
+            <div class="day-icon">${day.icon}</div>
+            <div class="day-temp">${Math.round(day.temp)}°</div>
+            <div class="condition">${day.description}</div>
+          </div>
+        `).join("");
+    }
+
+    message.textContent = "";
+  } catch (error) {
+    message.textContent = error.message;
+  }
+}
+
+form.addEventListener("submit", event => {
+  event.preventDefault();
+  const city = input.value.trim();
+  if (city) loadWeather("/weather?city=" + encodeURIComponent(city));
+});
+
+document.getElementById("locationBtn").addEventListener("click", () => {
+  if (!navigator.geolocation) {
+    message.textContent = "Location is not supported by this browser.";
+    return;
+  }
+
+  message.textContent = "Finding your location...";
+  navigator.geolocation.getCurrentPosition(
+    position => {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+      loadWeather(`/weather?lat=${lat}&lon=${lon}`);
+    },
+    () => {
+      message.textContent = "Location permission denied. Search for a city instead.";
+    }
+  );
+});
+</script>
+
+</body>
+</html>
